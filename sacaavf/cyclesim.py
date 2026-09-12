@@ -74,19 +74,21 @@ def _simulate_ws_tile(
         next_psum_valid = np.zeros_like(psum_valid)
         for i in range(kh):
             for j in range(mw):
+                if p < i + j:
+                    mask[i, j, 1] = True
                 if ifmap_valid[i, j]:
                     ivalue = ifmap[i, j]
                     wvalue = weight[i, j]
                     partial = psum_pipe[i, j] if psum_valid[i, j] else 0.0
                     result = partial + ivalue * wvalue
                     mask[i, j, 0] = wvalue != 0
-                    mask[i, j, 1] = ivalue != 0
+                    mask[i, j, 1] |= ivalue != 0
                     mask[i, j, 2] = True
                     if i + 1 < kh:
                         next_psum[i + 1, j] = result
                         next_psum_valid[i + 1, j] = True
                     if i == kh - 1:
-                        output[n, j] = result
+                        output[p - i - j, j] = result
 
         by_reg[0] += int(mask[:, :, 0].sum())
         by_reg[1] += int(mask[:, :, 1].sum())
@@ -139,19 +141,21 @@ def _simulate_is_tile(
         next_psum_valid = np.zeros_like(psum_valid)
         for i in range(kh):
             for j in range(mw):
+                if p < i + j:
+                    mask[i, j, 0] = True
                 if weight_valid[i, j]:
                     ivalue = ifmap[i, j]
                     wvalue = weight[i, j]
                     partial = psum_pipe[i, j] if psum_valid[i, j] else 0.0
                     result = partial + ivalue * wvalue
-                    mask[i, j, 0] = wvalue != 0
+                    mask[i, j, 0] |= wvalue != 0
                     mask[i, j, 1] = ivalue != 0
                     mask[i, j, 2] = True
                     if i + 1 < kh:
                         next_psum[i + 1, j] = result
                         next_psum_valid[i + 1, j] = True
                     if i == kh - 1:
-                        output[j, m] = result
+                        output[j, p - i - j] = result
 
         by_reg[0] += int(mask[:, :, 0].sum())
         by_reg[1] += int(mask[:, :, 1].sum())
