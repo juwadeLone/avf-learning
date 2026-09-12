@@ -33,7 +33,7 @@ def test_cycle_and_analytic_simulators_match(arr_h, arr_w):
             cyclesim = cycle_simulate(I, W, dataflow, arr_h, arr_w)
             np.testing.assert_allclose(cyclesim.O, expected)
             assert cyclesim.cycles == analytic.cycles
-            assert cyclesim.ace_bits == analytic.ace_bits
+            assert cyclesim.ace_reg_cycles == analytic.ace_reg_cycles
             np.testing.assert_array_equal(cyclesim.ace_per_pe, analytic.ace_per_pe)
             assert cyclesim.ace_by_reg == analytic.ace_by_reg
             assert cyclesim.active_pe_cycles == analytic.active_pe_cycles

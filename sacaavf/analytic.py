@@ -12,7 +12,7 @@ BITS = 32
 @dataclass
 class LayerResult:
     cycles: int
-    ace_bits: int
+    ace_reg_cycles: int
     ace_per_pe: np.ndarray
     active_pe_cycles: int
     ace_by_reg: tuple[int, int, int]
@@ -136,10 +136,10 @@ def simulate_layer(
                 ace_by_reg[1] += int(weight_ace.sum())
                 ace_by_reg[2] += int(psum_ace.sum())
 
-    ace_bits = int(sum(ace_by_reg))
+    ace_reg_cycles = int(sum(ace_by_reg))
     return LayerResult(
         cycles=int(cycles),
-        ace_bits=ace_bits,
+        ace_reg_cycles=ace_reg_cycles,
         ace_per_pe=ace_per_pe,
         active_pe_cycles=int(active_pe_cycles),
         ace_by_reg=tuple(int(x) for x in ace_by_reg),

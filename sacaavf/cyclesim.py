@@ -295,7 +295,7 @@ def simulate_layer(
 
     return LayerResult(
         cycles=int(cycles),
-        ace_bits=int(sum(ace_by_reg)),
+        ace_reg_cycles=int(sum(ace_by_reg)),
         ace_per_pe=ace_per_pe,
         active_pe_cycles=int(active_pe_cycles),
         ace_by_reg=tuple(int(x) for x in ace_by_reg),
