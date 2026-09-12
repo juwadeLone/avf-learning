@@ -50,7 +50,7 @@ def build_cifar10_cnn() -> keras.Model:
     x = keras.layers.Flatten(name="flatten")(x)
     x = keras.layers.Dense(512, activation="relu", name="dense1")(x)
     outputs = keras.layers.Dense(10, activation="softmax", name="classifier")(x)
-    return keras.Model(inputs, outputs, name="Cifar-10 CNN")
+    return keras.Model(inputs, outputs, name="Cifar10_CNN")
 
 
 def build_vgg16(weights: str | None = "imagenet") -> keras.Model:
