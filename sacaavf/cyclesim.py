@@ -54,11 +54,12 @@ def _simulate_ws_tile(
     output = np.zeros((N, mw), dtype=np.float32)
     masks: list[np.ndarray] = []
     by_reg = [0, 0, 0]
+    live = np.count_nonzero(I[:, k0 : k0 + kh], axis=0) > 0
 
     for c in range(kh):
         weight[c, :mw] = W[k0 + c, m0 : m0 + mw]
         mask = _new_mask(arr_h, arr_w)
-        mask[: c + 1, :mw, 1] = True
+        mask[: c + 1, :mw, 1] = live[: c + 1, None]
         masks.append(mask)
         by_reg[1] += int(mask[:, :, 1].sum())
 
@@ -75,7 +76,7 @@ def _simulate_ws_tile(
         for i in range(kh):
             for j in range(mw):
                 if p < i + j:
-                    mask[i, j, 1] = True
+                    mask[i, j, 1] = live[i]
                 if ifmap_valid[i, j]:
                     ivalue = ifmap[i, j]
                     wvalue = weight[i, j]
@@ -121,11 +122,12 @@ def _simulate_is_tile(
     output = np.zeros((mw, M), dtype=np.float32)
     masks: list[np.ndarray] = []
     by_reg = [0, 0, 0]
+    live = np.count_nonzero(W[k0 : k0 + kh, :], axis=1) > 0
 
     for c in range(kh):
         ifmap[c, :mw] = I[n0 : n0 + mw, k0 + c]
         mask = _new_mask(arr_h, arr_w)
-        mask[: c + 1, :mw, 0] = True
+        mask[: c + 1, :mw, 0] = live[: c + 1, None]
         masks.append(mask)
         by_reg[0] += int(mask[:, :, 0].sum())
 
@@ -142,7 +144,7 @@ def _simulate_is_tile(
         for i in range(kh):
             for j in range(mw):
                 if p < i + j:
-                    mask[i, j, 0] = True
+                    mask[i, j, 0] = live[i]
                 if weight_valid[i, j]:
                     ivalue = ifmap[i, j]
                     wvalue = weight[i, j]

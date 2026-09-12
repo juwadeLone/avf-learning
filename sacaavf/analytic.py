@@ -74,16 +74,17 @@ def simulate_layer(
 
                 i_idx = np.arange(kh)[:, None]
                 j_idx = np.arange(mw)[None, :]
-                weight_mac_ace = i_idx + j_idx + nz_i_col[k0 : k0 + kh, None]
-                weight_ace = (kh - i_idx) + weight_mac_ace
+                live = (nz_i_col[k0 : k0 + kh] > 0)[:, None]
+                weight_ace = (
+                    ((kh - i_idx) + i_idx + j_idx) * live + nz_i_col[k0 : k0 + kh, None]
+                )
                 ifmap_ace = N * (W[k0 : k0 + kh, m0 : m0 + mw] != 0)
                 psum_ace = np.full((kh, mw), N, dtype=np.int64)
                 ace_per_pe[:kh, :mw] += weight_ace + ifmap_ace + psum_ace
 
                 ace_by_reg[0] += int(ifmap_ace.sum())
-                ace_by_reg[1] += int(weight_mac_ace.sum())
+                ace_by_reg[1] += int(weight_ace.sum())
                 ace_by_reg[2] += int(psum_ace.sum())
-                ace_by_reg[1] += mw * kh * (kh + 1) // 2
 
     elif dataflow == "IS":
         nz_w_row = np.count_nonzero(W, axis=1)
@@ -97,18 +98,19 @@ def simulate_layer(
 
                 i_idx = np.arange(kh)[:, None]
                 j_idx = np.arange(nw)[None, :]
-                ifmap_mac_ace = i_idx + j_idx + nz_w_row[k0 : k0 + kh, None]
-                ifmap_ace = (kh - i_idx) + ifmap_mac_ace
+                live = (nz_w_row[k0 : k0 + kh] > 0)[:, None]
+                ifmap_ace = (
+                    ((kh - i_idx) + i_idx + j_idx) * live + nz_w_row[k0 : k0 + kh, None]
+                )
                 weight_ace = M * (
                     I[n0 : n0 + nw, k0 : k0 + kh].T != 0
                 )
                 psum_ace = np.full((kh, nw), M, dtype=np.int64)
                 ace_per_pe[:kh, :nw] += ifmap_ace + weight_ace + psum_ace
 
-                ace_by_reg[0] += int(ifmap_mac_ace.sum())
+                ace_by_reg[0] += int(ifmap_ace.sum())
                 ace_by_reg[1] += int(weight_ace.sum())
                 ace_by_reg[2] += int(psum_ace.sum())
-                ace_by_reg[0] += nw * kh * (kh + 1) // 2
 
     else:
         nz_w_col = np.count_nonzero(W, axis=0)

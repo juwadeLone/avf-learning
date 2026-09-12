@@ -47,3 +47,17 @@ def test_ws_pre_store_weight_ace_counts():
         int(mask[:, :, 1].sum()) for mask in result.ace_masks[:3]
     ]
     assert pre_store_counts == [3, 6, 9]
+
+
+def test_ws_all_zero_ifmap_column_has_no_stationary_weight_ace():
+    I = np.array([[0.0, 1.0], [0.0, 2.0]], dtype=np.float32)
+    W = np.ones((2, 1), dtype=np.float32)
+    result = cycle_simulate(I, W, "WS", 2, 1)
+    assert sum(int(mask[0, 0, 1]) for mask in result.ace_masks) == 0
+
+
+def test_is_all_zero_weight_row_has_no_stationary_ifmap_ace():
+    I = np.ones((1, 1), dtype=np.float32)
+    W = np.zeros((1, 2), dtype=np.float32)
+    result = cycle_simulate(I, W, "IS", 1, 2)
+    assert sum(int(mask[0, :, 0].sum()) for mask in result.ace_masks) == 0
