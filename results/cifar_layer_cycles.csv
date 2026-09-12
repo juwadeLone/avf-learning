@@ -1,0 +1,19 @@
+model,dataflow,array,layer,cycles
+Cifar-10 CNN,WS,32x32,conv1,984
+Cifar-10 CNN,WS,32x32,conv2,7902
+Cifar-10 CNN,WS,32x32,conv3,4284
+Cifar-10 CNN,WS,32x32,conv4,6984
+Cifar-10 CNN,WS,32x32,dense1,76000
+Cifar-10 CNN,WS,32x32,classifier,1168
+Cifar-10 CNN,IS,32x32,conv1,3336
+Cifar-10 CNN,IS,32x32,conv2,28206
+Cifar-10 CNN,IS,32x32,conv3,6966
+Cifar-10 CNN,IS,32x32,conv4,10872
+Cifar-10 CNN,IS,32x32,dense1,28750
+Cifar-10 CNN,IS,32x32,classifier,1168
+Cifar-10 CNN,OS,32x32,conv1,2553
+Cifar-10 CNN,OS,32x32,conv2,8734
+Cifar-10 CNN,OS,32x32,conv3,3468
+Cifar-10 CNN,OS,32x32,conv4,5048
+Cifar-10 CNN,OS,32x32,dense1,26096
+Cifar-10 CNN,OS,32x32,classifier,521
