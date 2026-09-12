@@ -44,8 +44,14 @@ consumption is not directly masked by a multiplication with zero:
   psum always propagates additively; it is never masked.
 - A stationary operand (weight in WS, ifmap in IS) is ACE
   * during pre-store cycles once it has entered the array (paper Fig. 4:
-    3, 6, 9 registers for a 3x3 array in cycles 1,2,3) — treat every pre-stored
-    value as ACE while in flight / resident before its first use;
+    3, 6, 9 registers for a 3x3 array in cycles 1,2,3) and while resident
+    before its first use — BUT only if it will be multiplied by at least one
+    non-zero streamed operand in this tile (`live = count_n(I[n,k_i]!=0) > 0`
+    for WS; `count_m(W[k_i,m]!=0) > 0` for IS). A resident value that will only
+    ever meet zeros is directly masked (paper §III-A) and is un-ACE for its
+    whole residence, pre-store included. Fig. 4's 3/6/9 example assumes
+    non-zero data. Dead-weight case is what makes FC layers (N=1, sparse
+    ifmap) have tiny AVF as in the paper (Fig. 12: 0.6%);
   * during MAC cycles when it is being multiplied by a non-zero operand
     (Table I);
   * during MAC cycles when it is resident but the PE is waiting for its first
